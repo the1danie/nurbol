@@ -1,36 +1,62 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Health Impact Monitor
 
-## Getting Started
+Веб-приложение для мониторинга влияния профессиональной деятельности на здоровье преподавателей СКУ им. М.Козыбаева.
 
-First, run the development server:
+## Настройка Supabase
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+### 1. Создайте проект на supabase.com
+
+Зарегистрируйтесь на [supabase.com](https://supabase.com) и создайте новый проект.
+
+### 2. Запустите SQL-схему
+
+В разделе **SQL Editor** вашего Supabase-проекта выполните содержимое файла `supabase/schema.sql`.
+
+### 3. Настройте переменные окружения
+
+Откройте файл `.env.local` и заполните реальными значениями из **Settings → API** вашего проекта:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://xxxx.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbG...
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 4. Запустите приложение
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm install
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Откройте http://localhost:3000
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## Функциональность
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Модуль | Описание |
+|--------|----------|
+| Регистрация/Логин | Каждый преподаватель имеет личный кабинет |
+| Показатели здоровья | Давление, ЧСС, стресс, сон, усталость, энергия, шаги, вода, боль |
+| Опросник | Настроение, тревожность, удовлетворённость работой, жалобы |
+| Расписание | Учёт учебной нагрузки (пары, типы, часы, окна) |
+| Аналитика | Графики трендов, корреляция нагрузки и здоровья, сезонный анализ |
+| Индексы здоровья | Автоматический расчёт 4 индексов (0-100) |
+| Экспорт | Выгрузка в Excel, CSV (для SPSS/R) и PDF-отчёт |
+| Двуязычность | Русский / Казахский |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Индексы здоровья
 
-## Deploy on Vercel
+- health_index (Индекс здоровья) - чем выше, тем лучше
+- workload_index (Индекс нагрузки) - чем выше, тем больше нагрузка
+- stress_index (Индекс стресса) - чем выше, тем хуже
+- fatigue_index (Индекс усталости) - чем выше, тем хуже
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Стек технологий
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Next.js 14 (App Router)
+- Supabase (PostgreSQL + Authentication)
+- Tailwind CSS
+- Recharts (графики)
+- react-i18next (двуязычность)
+- xlsx + jsPDF (экспорт)
