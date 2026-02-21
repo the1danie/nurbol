@@ -3,10 +3,11 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useTranslation } from 'react-i18next'
+import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import {
   LayoutDashboard, Heart, Calendar, BarChart3,
-  Download, User, LogOut, Languages
+  Download, User, LogOut, Languages, Menu, X
 } from 'lucide-react'
 import i18n from '@/lib/i18n'
 
@@ -23,6 +24,7 @@ export default function Sidebar() {
   const { t } = useTranslation()
   const pathname = usePathname()
   const router = useRouter()
+  const [mobileOpen, setMobileOpen] = useState(false)
 
   const toggleLang = () => {
     const newLang = i18n.language === 'ru' ? 'kz' : 'ru'
@@ -35,8 +37,8 @@ export default function Sidebar() {
     router.push('/login')
   }
 
-  return (
-    <aside className="w-64 min-h-screen bg-white border-r border-slate-200 flex flex-col shadow-sm">
+  const SidebarContent = () => (
+    <>
       {/* Логотип */}
       <div className="p-5 border-b border-slate-200">
         <div className="flex items-center gap-2">
@@ -59,6 +61,7 @@ export default function Sidebar() {
             <Link
               key={key}
               href={href}
+              onClick={() => setMobileOpen(false)}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                 active
                   ? 'bg-blue-50 text-blue-700'
@@ -72,11 +75,11 @@ export default function Sidebar() {
         })}
       </nav>
 
-      {/* Переключатель языка + Выход */}
+      {/* Язык + Выход */}
       <div className="p-3 border-t border-slate-200 space-y-1">
         <button
           onClick={toggleLang}
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-colors"
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors"
         >
           <Languages className="w-4 h-4" />
           {i18n.language === 'ru' ? 'Қазақша' : 'Русский'}
@@ -89,6 +92,71 @@ export default function Sidebar() {
           {t('nav.logout')}
         </button>
       </div>
-    </aside>
+    </>
+  )
+
+  return (
+    <>
+      {/* Десктоп — боковая панель */}
+      <aside className="hidden lg:flex w-64 min-h-screen bg-white border-r border-slate-200 flex-col shadow-sm">
+        <SidebarContent />
+      </aside>
+
+      {/* Мобилка — верхний хедер */}
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-white border-b border-slate-200 flex items-center justify-between px-4 h-14 shadow-sm">
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center">
+            <Heart className="w-3.5 h-3.5 text-white" />
+          </div>
+          <span className="text-sm font-bold text-slate-800">Health Monitor</span>
+        </div>
+        <button
+          onClick={() => setMobileOpen(true)}
+          className="p-2 rounded-lg text-slate-600 hover:bg-slate-100"
+        >
+          <Menu className="w-5 h-5" />
+        </button>
+      </div>
+
+      {/* Мобилка — выдвижное меню (drawer) */}
+      {mobileOpen && (
+        <div className="lg:hidden fixed inset-0 z-50 flex">
+          {/* Затемнение */}
+          <div
+            className="absolute inset-0 bg-black/40"
+            onClick={() => setMobileOpen(false)}
+          />
+          {/* Панель */}
+          <aside className="relative w-72 bg-white flex flex-col shadow-xl">
+            <button
+              onClick={() => setMobileOpen(false)}
+              className="absolute top-4 right-4 p-1.5 rounded-lg text-slate-500 hover:bg-slate-100"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <SidebarContent />
+          </aside>
+        </div>
+      )}
+
+      {/* Мобилка — нижняя навигация */}
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-slate-200 flex items-center justify-around px-2 h-16 shadow-lg">
+        {navItems.slice(0, 5).map(({ key, href, icon: Icon }) => {
+          const active = pathname === href || pathname.startsWith(href + '/')
+          return (
+            <Link
+              key={key}
+              href={href}
+              className={`flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg transition-colors ${
+                active ? 'text-blue-600' : 'text-slate-400'
+              }`}
+            >
+              <Icon className="w-5 h-5" />
+              <span className="text-[10px] font-medium">{t(`nav.${key}`)}</span>
+            </Link>
+          )
+        })}
+      </nav>
+    </>
   )
 }
