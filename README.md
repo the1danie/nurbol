@@ -60,3 +60,4 @@ npm run dev
 - Recharts (графики)
 - react-i18next (двуязычность)
 - xlsx + jsPDF (экспорт)
+# nurbol
